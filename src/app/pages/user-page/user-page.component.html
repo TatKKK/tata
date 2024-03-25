@@ -1,0 +1,10 @@
+<div class="container">
+  <app-sidebar class="app-sidebar"></app-sidebar>
+  <app-patient-info-card *ngIf="userRole === 'patient'" class="user-info"></app-patient-info-card>
+  <app-doctor-info-card *ngIf="userRole === 'doctor'"></app-doctor-info-card>
+  <app-doctor-admin *ngIf="userRole === 'admin'"></app-doctor-admin>
+  <div class="card-element" *ngIf="userRole !== 'admin'">
+    <h2>ჩემი ჯავშანი  <span>({{ getToTal() }})</span></h2>     
+  </div>
+  <app-booking-calendar class="booking-calendar"></app-booking-calendar>
+</div>
