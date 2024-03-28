@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../../auth.service';
+import { AuthService } from '../../services/auth/auth.service';
 import { Token } from '@angular/compiler';
-import { AppointmentsService } from '../../appointments.service';
+import { AppointmentsService } from '../../services/appointments.service';
+
 
 
 
@@ -11,6 +12,7 @@ import { AppointmentsService } from '../../appointments.service';
   styleUrl: './user-page.component.css'
 })
 export class UserPageComponent implements OnInit {
+  userId: number | null = null;
   userRole!:string;
   isDoctor:boolean=false;
   isPatient:boolean=false;  
@@ -27,12 +29,11 @@ export class UserPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.userId = this.authService.getUserId();
     this.userRole = this.authService.getUserRole();
     this.checkUserRole();
     this.getToTal();
-    console.log("aaaaaba?");   
-    
-  }
+   }
 
   getToTal():number{
     if(this.isDoctor){

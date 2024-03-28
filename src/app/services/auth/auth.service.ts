@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Login } from './models/user.model';
-import { Observable, catchError, throwError, tap } from 'rxjs';
+import { Login } from '../../models/user.model';
+import { Observable, catchError, throwError, tap , BehaviorSubject} from 'rxjs';
 import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
@@ -14,7 +14,37 @@ import { jwtDecode } from 'jwt-decode';
 export class AuthService {
   private userRole: 'patient' | 'doctor' | 'admin' | 'unknown' = 'unknown';
 
-  constructor(private http:HttpClient, private router:Router) { }
+  private isLoggedInSubject = new BehaviorSubject<boolean>(this.hasToken());
+
+
+  
+isLoggedInSync(): boolean {
+  return this.isLoggedInSubject.value;
+}
+
+
+  constructor(private http:HttpClient, private router:Router) {
+    this.updateLoginStatus();
+   }
+
+   private updateLoginStatus(): void {
+    this.isLoggedInSubject.next(this.hasToken());
+  }
+
+  private hasToken(): boolean {
+    return !!this.getToken();
+  }
+
+  public isLoggedIn(): Observable<boolean> {
+    return this.isLoggedInSubject.asObservable();
+  }
+
+  public logout(): void {
+    this.removeToken();
+    this.userRole = 'unknown';
+    this.updateLoginStatus();
+    this.router.navigate(['/']);
+  }
 
   authenticate(login: Login): Observable<any> {
     let httpOptions = {
@@ -97,12 +127,7 @@ getUserRole(): 'patient' | 'doctor' | 'admin' | 'unknown' {
   }
 
  
-  logout(): void {
-    this.removeToken();
-    this.userRole='unknown';
-    this.router.navigate(['/']);
-  }
-  //-- setters, getters
+  
   public setToken(token: string): void {
     localStorage.setItem('token', token);
   }
@@ -116,5 +141,4 @@ getUserRole(): 'patient' | 'doctor' | 'admin' | 'unknown' {
   }
   
 
-  
 }

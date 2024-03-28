@@ -1,3 +1,13 @@
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+.table-container {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.table-container::-webkit-scrollbar {
+  display: none;
+}
+
 :root {
     --color-primary:#053354;
     --color-primary-hover:#053350;
@@ -245,8 +255,8 @@ a{
   text-decoration: none;
 }
 
-
+/* 
 
 .card-title{
   margin-bottom:0;
-}
+} */

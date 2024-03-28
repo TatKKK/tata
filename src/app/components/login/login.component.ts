@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Login } from '../../models/user.model';
 import { Router } from '@angular/router';
-import { AuthService } from '../../auth.service';
+import { AuthService } from '../../services/auth/auth.service';
 import { jwtDecode} from '../../../../node_modules/jwt-decode';
 
 @Component({
@@ -49,16 +49,28 @@ authenticate(): void {
       this.showLoginForm = false;
       this.showAuth = false;
       this.isLoggedIn = true;
-  
       if (this.userRole === 'admin') { 
-        this.router.navigate(['/']); 
-      } else {
-        this.router.navigate(['/userPage', userId]);
-      }
+          this.router.navigate(['/doctorsList']); 
+        } else {
+          this.router.navigate(['/userPage', this.login.email]);
+        }
+     
+  
+      // if (this.userRole === 'admin') { 
+      //   this.router.navigate(['/']); 
+      // } else {
+      //   this.router.navigate(['/userPage', userId]);
+      // }
     } else {
       console.error('Could not retrieve user ID from token');
     }
   });
+}
+
+goToUserPage():void{
+  this.router.navigate(['/userPage', this.login.email]);
+
+
 }
 
 
@@ -67,5 +79,7 @@ logout():void{
   this.isLoggedIn=false;
   this.showAuth=true;
 }
+
+
 
 }

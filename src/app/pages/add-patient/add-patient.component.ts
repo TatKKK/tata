@@ -3,13 +3,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AbstractControl } from '@angular/forms';
 import { ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
-import { PatientsService } from '../../patients.service';
+import { PatientsService } from '../../services/patients.service';
 import { tap } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { RegistrationSuccessComponent } from '../../dialogs/registration-success/registration-success.component';
 import { ActivationCodeComponent } from '../../dialogs/activation-code/activation-code.component';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { MatDialogComponent } from '../../dialogs/mat-dialog/mat-dialog.component';
+import { MatDialogRef } from '@angular/material/dialog';
 
 
 @Component({
@@ -19,6 +20,7 @@ import { MatDialogComponent } from '../../dialogs/mat-dialog/mat-dialog.componen
 })
 
 export class AddPatientComponent implements OnInit {
+  
   faSpin=faSpinner;
   patientForm: FormGroup;
   userEnteredCode:string='';
@@ -31,7 +33,8 @@ export class AddPatientComponent implements OnInit {
     private dialog:MatDialog,
     private fb: FormBuilder,
     private router: Router,
-    private patientsService: PatientsService    
+    private patientsService: PatientsService   ,
+    // public matDialog:MatDialogRef <any>
   ) {
     this.patientForm = this.fb.group({
       Fname: ['', [Validators.required, this.validateName]],
@@ -62,7 +65,8 @@ export class AddPatientComponent implements OnInit {
       const formData = new FormData();
       formData.append('Fname', this.patientForm.get('Fname')?.value ?? '');
       formData.append('Lname', this.patientForm.get('Lname')?.value ?? '');
-      formData.append('Email', this.patientForm.get('Email')?.value ?? '');
+      const email = this.patientForm.get('Email')?.value ?? '';
+     formData.append('Email', email);
       formData.append('IdNumber', this.patientForm.get('IdNumber')?.value ?? '');
       // formData.append('Code', this.patientForm.get('Code')?.value ?? '');
       formData.append('Password', this.patientForm.get('Password')?.value ?? '');
@@ -77,8 +81,11 @@ export class AddPatientComponent implements OnInit {
   
       this.patientsService.addPatient(formData).subscribe({
         next: (res) => {
+          // console.log(res.userId);
+          console.log(res);
+          // const userId = res.userId;
           this.openDialog('registrationSuccess');
-          this.router.navigate(['/']);
+          this.router.navigate(['/userPage', email]);
         },
         error: (err) => {
           console.error("Error response", err.error);
@@ -89,15 +96,21 @@ export class AddPatientComponent implements OnInit {
     }
   }
   
-  openDialog(dialogType: 'activationCode' | 'registrationSuccess'): void {
+  openDialog(dialogType: 'activationCode' | 'registrationSuccess'): MatDialogRef<any> | undefined {
     let dialogRef;
   
     if (dialogType === 'activationCode') {
       dialogRef = this.dialog.open(ActivationCodeComponent);
     } else if (dialogType === 'registrationSuccess') {
       dialogRef = this.dialog.open(RegistrationSuccessComponent);
+    } else {
+      throw new Error('Unsupported dialog type: ' + dialogType);
     }
+  
+    return dialogRef;
   }
+  
+  
   
   triggerFileInput(): void {
     document.getElementById('Image')?.click();

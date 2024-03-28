@@ -1,38 +1,18 @@
-// export class Appointment {
-//   id?: number;
-//   doctorId?: number;
-//   patientId?: number;    
-//   startTime: Date;
-//   notes?: string;
-//   status?:boolean;
-
-//   get endTime(): Date {
-//     return new Date(this.startTime.getTime() + 60 * 60 * 1000); 
-//   }
-
-//   constructor(startTime: Date) {
-//     this.startTime = startTime;
-//   }
-  
-// }
-
 export class Appointment {
-  
-  Id?: number;
-  DoctorId: number| undefined;
-  PatientId?: number;    
-  StartTime!: Date; 
-  EndTime!: string;
+  id?: number;
+  DoctorId?: number|null;
+  PatientId?: number|null;
+  StartTime?: Date;
+  EndTime: Date;
   Notes?: string;
-  Status?: boolean;
-  UserId?: number;
+  IsBooked?: boolean;
 
-  get startDateTime(): Date {
-    return new Date(this.StartTime);
+  constructor(startTime: Date, doctorId?: number | null, patientId?: number | null) {
+    this.StartTime = startTime;
+    this.EndTime = new Date(startTime.getTime() + 60 * 60 * 1000);
+    this.DoctorId = doctorId ?? null;
+    this.PatientId = patientId ?? null;
   }
-
-  get endDateTime(): Date {
-    return new Date(this.EndTime);
-  }
+  
+  
 }
-

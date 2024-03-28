@@ -5,7 +5,8 @@
 </div>
 <!-- <p *ngIf="this.userRole === 'admin'"> AAAAAAAAAAAAAAAAA</p> -->
 <div *ngIf="isLoggedIn" class="user-greeting">
-  <img [src]="'https://localhost:7042' + this.userImageUrl" alt="Patient image" class="patient-image">
+  <img [src]="'https://localhost:7042' + this.userImageUrl" alt="Patient image" 
+  class="patient-image" (click)="goToUserPage()">
   <!-- <span> {{this.userName}}</span> -->
   <span> {{this.userRole}}</span>
   <a routerLink="/" (click)="logout()"> Logout</a>

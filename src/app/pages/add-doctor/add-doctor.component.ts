@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { FormGroup, FormBuilder, ValidationErrors, Validators, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { DoctorsService } from '../../doctors.service';
-import { AuthService } from '../../auth.service';
+import { DoctorsService } from '../../services/doctors.service';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-add-doctor',
@@ -48,10 +48,7 @@ export class AddDoctorComponent {
   }
 
   ngOnInit(): void {}
-  jandaba():void{
-    alert('jandaba');
-  }
-
+  
   addDoctor(): void {
     console.log(this.doctorForm.controls)
     console.log(this.doctorForm.value);
@@ -98,18 +95,6 @@ console.log(this.auth.getUserId());
   }
   
   
-  // onFileChange(event: Event): void {
-  //   const element = event.target as HTMLInputElement;
-  //   let files = element.files;
-  //   if (files && files.length) {
-     
-  //     this.doctorForm.patchValue({
-  //       Image: files[0]
-  //     });
-    
-  //     this.doctorForm.get('Image')?.updateValueAndValidity();
-  //   }
-  // }
   onFileChange(event: Event, type: 'Image' | 'Cv'): void {
     const element = event.currentTarget as HTMLInputElement;
     console.log('changed');

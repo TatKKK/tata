@@ -1,29 +1,45 @@
+
+
+.custom-scrollbar-container {
+  position: relative;
+  overflow: hidden;
+  width: 100%; 
+  height: 100%; 
+}
+
+.scrollable-content {
+  height: 100%;
+  overflow-y: auto; 
+}
+
+.custom-scrollbar-trigger {
+  position: absolute;
+  right: 0; 
+  top: 0;
+  width: 20px; 
+  height: 100%;
+  cursor: pointer; 
+  z-index: 10; 
+}
+
+
+
 .container{
     position:relative;
 }
-.placeholder-overlay{
-    background: blue;
-    height: 350px;
-    width: 50px;
-    position: absolute;
-    right: 0;
-    z-index: 8;
-    bottom: 0;
-}
-
 .table-container{
-    max-height:300px;
+    max-height:500px;
     overflow-y: auto;
     border-right:10px solid #ECF2F8;
-
-
 }
 .table-container thead th {
     position: sticky;
     top: 0;
     z-index: 10; 
-    background-color: #DAFAEE;
+    background: #F0FAFF;
+
     border-bottom: 1px solid var(--color-border-light);
+    padding:20px;
   }
 
 .doc-list{
@@ -127,4 +143,3 @@
     padding: 0px 5px;
   }
   
-  /* Rest of the styles remain the same */

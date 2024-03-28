@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { PatientsService } from '../../patients.service';
-import { DoctorsService } from '../../doctors.service';
+import { PatientsService } from '../../services/patients.service';
+import { DoctorsService } from '../../services/doctors.service';
 
 @Component({
   selector: 'app-adduser',

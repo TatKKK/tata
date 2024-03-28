@@ -1,0 +1,5 @@
+<div class="container">
+    <app-admin-header></app-admin-header>
+    <app-doctor-admin [doctor]="doctor"></app-doctor-admin>
+    <app-booking-calendar *ngIf="doctorId !== null" [doctorId]="doctorId"></app-booking-calendar>
+</div>

@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { DoctorsService } from '../../doctors.service';
+import { DoctorsService } from '../../services/doctors.service';
 import { Doctor } from '../../models/doctor.model';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { faDeleteLeft } from '@fortawesome/free-solid-svg-icons';
-import { AuthService } from '../../auth.service';
+import { AuthService } from '../../services/auth/auth.service';
 import { throwError } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-doctor-category-list',
@@ -23,7 +24,8 @@ export class DoctorCategoryListComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     public doctorsService: DoctorsService,
-    private authService:AuthService
+    private authService:AuthService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -50,7 +52,9 @@ export class DoctorCategoryListComponent implements OnInit {
 
 deleteDoctor(doctor:Doctor):void{
   if (!this.authService.isAdmin()) {
-    alert('Only admin can delete');
+    this.snackBar.open(` Log in as admin; kaldani.tata@gmail.com/password:T123456*.`, 'Close', {
+      duration: 5000,
+    });
     return;
   }
   this.doctorsService.deleteDoctor(doctor).subscribe({
@@ -63,9 +67,19 @@ deleteDoctor(doctor:Doctor):void{
   })
 }
 
+openSnackBar1(message: string, action: string) { 
+  this.snackBar.open(message, action, { 
+    duration: 2000, 
+  }); 
+} 
+
 editDoctors(doctor:Doctor):void{
   if (!this.authService.isAdmin()) {
-    alert('Only admin can edit');
+    this.snackBar.open(` Log in as admin; kaldani.tata@gmail.com/password:T123456*.`, 'Close', {
+      duration: 5000,
+    });
+    
+
     return;
   }
     this.doctorsService.editDoctor(doctor).subscribe({

@@ -25,10 +25,10 @@
     margin: 10px 0;
   }
   .card-element{
-    text-align:center;
+    text-align:left;
   }
   .card-element h2{
-    font-size:18px;
+    font-size:22x;
     color:var(--color-active);
     font-weight:700;
   }

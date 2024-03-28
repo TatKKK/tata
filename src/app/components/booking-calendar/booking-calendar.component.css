@@ -11,6 +11,8 @@
 }
 
 /*----update */
+
+
 .hour-label,.date-label,.timeslot {
   width: 100px; 
   height: 60px; 
@@ -202,7 +204,9 @@ transition: 0.3s ease;
 
 
 /*--- Buttons */
-
+.calendar a:hover{
+  cursor:pointer;
+}
 .action-buttons{
   display:flex;
   align-items:start;
@@ -219,7 +223,7 @@ transition: 0.3s ease;
   padding: 13px 30px;
   border-radius: 50px;
   font-size:18px;
-  cursor: pointer;
+
   transition: background-color 0.3s;
 }
 .button svg {

@@ -15,6 +15,9 @@ import { AdduserComponent } from './pages/adduser/adduser.component';
 import { LoginComponent } from './components/login/login.component';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialogConfig } from '@angular/material/dialog';
+import { MatSliderThumb } from '@angular/material/slider';
+import { MatDialogContainer } from '@angular/material/dialog';
 import { MatDialogComponent } from './dialogs/mat-dialog/mat-dialog.component';
 import { DoctorCardsComponent } from './components/doctor-cards/doctor-cards.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
@@ -34,9 +37,14 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RegistrationSuccessComponent } from './dialogs/registration-success/registration-success.component';
 import { ActivationCodeComponent } from './dialogs/activation-code/activation-code.component';
 import { DoctorsListAdminComponent } from './pages/doctors-list-admin/doctors-list-admin.component';
-import { NgxSliderModule } from '@angular-slider/ngx-slider';
-import { MatSliderModule } from '@angular/material/slider';
 import { AdminHeaderComponent } from './components/admin-header/admin-header.component';
+import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
+import { ViewDoctorDialogComponent } from './dialogs/view-doctor-dialog/view-doctor-dialog.component';
+import { EditPageAdminComponent } from './pages/edit-page-admin/edit-page-admin.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { BrowserAnimationsModule } from   
+    '@angular/platform-browser/animations'
+
 
 
 
@@ -65,7 +73,11 @@ import { AdminHeaderComponent } from './components/admin-header/admin-header.com
    RegistrationSuccessComponent,
    ActivationCodeComponent,
    DoctorsListAdminComponent,
-   AdminHeaderComponent,  
+   AdminHeaderComponent,
+   PageNotFoundComponent,
+   ViewDoctorDialogComponent,
+   EditPageAdminComponent,  
+   
   ],
   imports: [
     BrowserModule,
@@ -79,8 +91,9 @@ import { AdminHeaderComponent } from './components/admin-header/admin-header.com
     FontAwesomeModule, 
     RouterModule,
     MatProgressSpinnerModule,
-    NgxSliderModule,
-    MatSliderModule
+    MatSnackBarModule,
+    BrowserAnimationsModule 
+   
   ],
   providers: [{ provide: LOCALE_ID, useValue: 'ka-GE' }],
   bootstrap: [AppComponent]

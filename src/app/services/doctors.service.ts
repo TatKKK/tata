@@ -1,13 +1,15 @@
-import { DoctorDto } from './models/doctor.model';
-import { Doctor } from './models/doctor.model';
+import { DoctorDto } from '../models/doctor.model';
+import { Doctor } from '../models/doctor.model';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, of, throwError,  } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SignalRService } from './signal-r.service';
 import { Injectable } from '@angular/core';
-import { AuthService } from './auth.service';
+import { AuthService } from './auth/auth.service';
 import { HttpResponse } from '@microsoft/signalr';
+import { BehaviorSubject } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 interface PaginatedDoctorResult {
   TotalCount: number;
@@ -24,13 +26,19 @@ export class DoctorsService {
   public doctorsG:Doctor[]=[];
 
   constructor(
+    public snackBar:MatSnackBar,
     private http:HttpClient,
     private authService:AuthService,
     private signalRService: SignalRService) {}  
     public incrementViewCount(doctorId: number): void {
       this.signalRService.hubConnection.invoke('UpdateViewCount', doctorId).catch((err) => console.error(err));
     }
-
+    private currentDoctorId = new BehaviorSubject<number | null>(null)
+    currentDoctorId$ = this.currentDoctorId.asObservable()
+  
+    setCurrentDoctorId (doctorId: number): void {
+      this.currentDoctorId.next(doctorId)
+    }
 
 private getHttpOptions() {
   return {
@@ -60,6 +68,13 @@ private getHttpOptions() {
       );
   }
 
+  getDoctorByEmail(Email:String): Observable<Doctor> {
+    return this.http.get<Doctor>(`https://localhost:7042/api/Doctors/doctor/email/${Email}`, this.getHttpOptions())
+      .pipe(
+        tap(doctor => console.log(doctor)),
+        catchError(this.handleError<Doctor>('getDoctor'))
+      );
+  }
   getDoctor(id: number): Observable<Doctor> {
     return this.http.get<Doctor>(`https://localhost:7042/api/Doctors/doctor/${id}`, this.getHttpOptions())
       .pipe(
@@ -76,10 +91,14 @@ private getHttpOptions() {
    addDoctor(formData:any): Observable<any> {
     let token=this.authService.getToken();
     if(!this.authService.isAdmin()){
-      alert('Unauthorized');   } 
+      this.snackBar.open(` Log in as admin; kaldani.tata@gmail.com/password:T123456*.`, 'Close', {
+        duration: 5000,
+      });   } 
 
       if(!this.authService.getToken()){
-        alert('No Token');
+        this.snackBar.open(`No Token`, 'Close', {
+          duration: 5000,
+        });;
       }
       let httpOptions={
         headers:new HttpHeaders({
@@ -98,10 +117,19 @@ private getHttpOptions() {
 
 
   editDoctor(formData:any):Observable<any>{
-    if (!this.authService.isAdmin()) {
-      return throwError(() => new Error('Unauthorized'));
-    }
-    return this.http.put<any>("https://localhost:7042/api/Doctors", formData)
+    let token=this.authService.getToken();
+    if(!this.authService.isAdmin()){
+      alert('Unauthorized');   } 
+
+      if(!this.authService.getToken()){
+        alert('No Token');
+      }
+      let httpOptions={
+        headers:new HttpHeaders({
+          'Authorization':`Bearer ${token}`
+        })
+      };
+    return this.http.put<any>("https://localhost:7042/api/Doctors", formData, httpOptions)
     .pipe(
       catchError(error => {
         console.error('Error editing doctor:', error);
@@ -112,7 +140,7 @@ private getHttpOptions() {
 
   deleteDoctor(doctor: Doctor): Observable<any> {
 
-    let token = this.authService.getToken;
+    let token = this.authService.getToken();
     if (!this.authService.isAdmin()) {
       return throwError(() => new Error('Unauthorized'));
     }

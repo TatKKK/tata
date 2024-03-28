@@ -1,11 +1,11 @@
-import { Component, OnInit, ElementRef, viewChild, ViewChild } from '@angular/core';
-import { AuthService } from '../../auth.service';
-import { DoctorsService } from '../../doctors.service';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { AuthService } from '../../services/auth/auth.service';
+import { DoctorsService } from '../../services/doctors.service';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { faDeleteLeft } from '@fortawesome/free-solid-svg-icons';
 import { Doctor } from '../../models/doctor.model';
 import { ActivatedRoute } from '@angular/router';
-import { MatSliderChange } from '@angular/material/slider';
+
 
 @Component({
   selector: 'app-doctors-list-admin',
@@ -13,6 +13,18 @@ import { MatSliderChange } from '@angular/material/slider';
   styleUrl: './doctors-list-admin.component.css',
 })
 export class DoctorsListAdminComponent implements OnInit {
+
+  @ViewChild('scrollableContent', { static: true }) scrollableContent!: ElementRef;
+
+  scrollContent(event: MouseEvent) {
+    const content = this.scrollableContent?.nativeElement;
+    if (content) {
+      const scrollAmount = 100;
+      content.scrollBy(0, scrollAmount);
+    } else {
+      console.error('Element not found!');
+    }
+  }
   faEdit=faEdit;
   faDelete=faDeleteLeft;
 
@@ -38,6 +50,9 @@ export class DoctorsListAdminComponent implements OnInit {
   
   
   
+  ngAfterViewInit(): void{
+    this.doctorsService.getDoctors();
+  }
   
   getStars(score: number | undefined) {
     const validScore = score ?? 1;

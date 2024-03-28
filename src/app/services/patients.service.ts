@@ -1,12 +1,12 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { Patient } from './models/patient.model';
-import { PatientDto } from './models/patient.model';
-import { ActivationCode } from './models/patient.model';
+import { Patient } from '../models/patient.model';
+import { PatientDto } from '../models/patient.model';
+import { ActivationCode } from '../models/patient.model';
 
 import { Injectable } from '@angular/core';
-import { AuthService } from './auth.service';
+import { AuthService } from './auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -60,6 +60,13 @@ getPatients(): Observable<Patient[]> {
     );
 }
 
+getPatientByEmail(Email: string): Observable<Patient> {
+  return this.http.get<Patient>(`https://localhost:7042/api/Patients/patient/email/${Email}`, this.getHttpOptions())
+    .pipe(
+      tap(patient => console.log(patient)),
+      catchError(this.handleError<Patient>('getPatient'))
+    );
+}
 getPatient(id: number): Observable<Patient> {
   return this.http.get<Patient>(`https://localhost:7042/api/Patients/patient/${id}`, this.getHttpOptions())
     .pipe(

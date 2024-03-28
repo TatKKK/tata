@@ -1,0 +1,18 @@
+.container{
+    padding:50px 0;
+}
+.mat-dialog-container::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  .mat-dialog-container::-webkit-scrollbar-track {
+    background: #67cdee;
+  }
+  
+  .mat-dialog-container::-webkit-scrollbar-thumb {
+    background: #3b3dc5;
+  }
+  
+  .mat-dialog-container::-webkit-scrollbar-thumb:hover {
+    background: #0a1e39;
+  }

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy , ViewChild, ElementRef} from '@angular/core';
-import { FilterService } from '../../filter.service';
+import { FilterService } from '../../services/filter.service';
 import { Subscription } from 'rxjs';
 
 

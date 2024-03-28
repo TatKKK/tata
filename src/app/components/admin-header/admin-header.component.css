@@ -3,7 +3,7 @@
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    margin-top: 30px;
+    /* margin-top: 30px; */
     margin-bottom: 30px;
     gap:50px;
   }
@@ -20,7 +20,7 @@
    flex-direction: column;
    justify-content: space-around;
    max-height:50px;
-   gap:10px;
+   gap:7px;
    
   }
 

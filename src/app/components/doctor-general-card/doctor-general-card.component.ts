@@ -1,9 +1,8 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { DoctorsService } from '../../doctors.service';
+import { Component , Input} from '@angular/core';
+import { DoctorsService } from '../../services/doctors.service';
 import { ChangeDetectorRef } from '@angular/core';
 import { Doctor } from '../../models/doctor.model';
-import { AppointmentsService } from '../../appointments.service';
+import { AppointmentsService } from '../../services/appointments.service';
 
 @Component({
   selector: 'app-doctor-general-card',
@@ -12,40 +11,23 @@ import { AppointmentsService } from '../../appointments.service';
 })
 export class DoctorGeneralCardComponent {
 
-  doctor!:Doctor;
+
+  @Input() doctor!: Doctor;
+  // doctor!:Doctor;
+  @Input() doctorId!: number;
 
   constructor(
-    private route: ActivatedRoute,
     public doctorsService:DoctorsService,
     public appointmentsService:AppointmentsService,
     private changeDetectorRef:ChangeDetectorRef
   ){}
 
-  
+
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      const id = params['id'];
-      if (id) {
-        this.doctorsService.getDoctor(id).subscribe({
-          next: (doctor) => {
-            this.doctor = doctor;
-            if (doctor && doctor.Id !== undefined && doctor.Id !== null) {
-              this.appointmentsService.setCurrentDoctorId(doctor.Id);
-            } else {
-              console.error('Doctor ID is undefined or null');
-            }
-            this.changeDetectorRef.detectChanges(); 
-            console.log(doctor); 
-          },
-          error: (err) => {
-            console.error('Failed to fetch', err);
-          },
-          complete: () => {
-            console.log('Fetch call completed');
-          }
-        });        
-      }
-    });
+    if (this.doctor && this.doctor.Id !== undefined && this.doctor.Id !== null) {
+      this.appointmentsService.setCurrentDoctorId(this.doctor.Id);
+    }
+ 
   }
   
   getStars(score: number | undefined) {

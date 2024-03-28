@@ -1,9 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { DoctorsService } from '../../doctors.service';
+import { DoctorsService } from '../../services/doctors.service';
 import { Doctor } from '../../models/doctor.model';
 import { ChangeDetectorRef } from '@angular/core';
-import { AppointmentsService } from '../../appointments.service';
+import { AppointmentsService } from '../../services/appointments.service';
 
 
 @Component({

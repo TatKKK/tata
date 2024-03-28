@@ -3,7 +3,7 @@ import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
 import { Doctor } from '../../models/doctor.model';
-import { DoctorsService } from '../../doctors.service';
+import { DoctorsService } from '../../services/doctors.service';
 
 
 @Component({

@@ -12,15 +12,6 @@
   text-align:left;
 }
 
-.user-image {
-    border-radius: 50%;
-    width: 137px;
-    height: 137px;
-    object-fit:cover;
-    margin-bottom:10px;
-  }
-
-
   .user-info {
     display: flex;
     flex-direction: column;

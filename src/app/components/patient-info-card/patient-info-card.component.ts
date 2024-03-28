@@ -1,13 +1,13 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { PatientsService } from '../../patients.service';
+import { PatientsService } from '../../services/patients.service';
 import { Patient } from '../../models/patient.model';
 import { User } from '../../models/user.model';
 import { ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { AppointmentsService } from '../../appointments.service';
+import { AppointmentsService } from '../../services/appointments.service';
 
-import { AuthService } from '../../auth.service';
+import { AuthService } from '../../services/auth/auth.service';
 
 
 
@@ -17,37 +17,39 @@ import { AuthService } from '../../auth.service';
   styleUrl: './patient-info-card.component.css'
 })
 export class PatientInfoCardComponent implements OnInit { 
-  @Input() userId: number | null = null;
+  // @Input() userId: number | null = null;
+  @Input() patient!:Patient;
   
-  patient: User = new User(null);
+  // patient: User = new User(null);
   // patient!:Patient;
 
   constructor(
     private route: ActivatedRoute,
-    private router:Router,
-    public patients:PatientsService,
-    public appointments:AppointmentsService,
-    private changeDetectorRef:ChangeDetectorRef,
-    private auth:AuthService
+    private router: Router,
+    private patientsService: PatientsService,
+    private appointmentsService: AppointmentsService,
+    private changeDetectorRef: ChangeDetectorRef,
+    private authService: AuthService
   ){}
 
   ngOnInit(): void {    
-    if((!this.auth.authenticate) || this.auth.getUserRole() !== 'patient') {
+    if((!this.authService.authenticate) || this.authService.getUserRole() !== 'patient') {
       alert('Not Authorized');
-      this.router.navigate(['/login']); 
+      this.router.navigate(['/']); 
       return;
     }
 
     this.route.params.subscribe(params=>{
-      const id=+params['id'];
-      if(id){
-        this.patients.getPatient(id).subscribe({
+      const Email=params['Email'];
+      if(Email){
+        this.patientsService.getPatientByEmail(Email).subscribe({
           next:(patient)=>{
             this.patient=patient;
             this.changeDetectorRef.detectChanges(); 
-            console.log(patient.Id);
+            console.log(patient.Email);
+            console.log(patient.Id)
             if (patient && patient.Id !== undefined && patient.Id !== null) {
-              this.appointments.setCurrentPatientId(patient.Id);
+              this.appointmentsService.setCurrentPatientId(patient.Id);
             }
           },
           error:(err)=>{
@@ -59,13 +61,13 @@ export class PatientInfoCardComponent implements OnInit {
         });
       }
       else{
-        console.log("no id");
+        console.log("no id/email");
       }
     });    
   }
   
 getToTal():number{
-  return this.appointments.getAppointmentsByPatient.length;
+  return this.appointmentsService.getAppointmentsByPatient.length;
 }
 
 }
