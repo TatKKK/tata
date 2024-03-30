@@ -4,7 +4,6 @@ import { HomeComponent } from './pages/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { DoctorCategoryListComponent } from './components/doctor-category-list/doctor-category-list.component';
 import { AddPatientComponent } from './pages/add-patient/add-patient.component';
-import { DoctorInfoCardComponent } from './components/doctor-info-card/doctor-info-card.component';
 import { UserPageComponent } from './pages/user-page/user-page.component';
 import { AddDoctorComponent } from './pages/add-doctor/add-doctor.component';
 import { ViewDoctorComponent } from './pages/view-doctor/view-doctor.component';
@@ -18,8 +17,7 @@ import { EditPageAdminComponent } from './pages/edit-page-admin/edit-page-admin.
 
 const routes: Routes = [
   {path:'', component:HomeComponent},
-  {path: 'userPage/:Email',  component:UserPageComponent},
-  {path:'doctor/:id', component:DoctorInfoCardComponent},
+  {path: 'userPage/:email',  component:UserPageComponent},
   {path:'addPatient', component:AddPatientComponent},
   {path:'addDoctor', component:AddDoctorComponent, canActivate: [AuthGuard]},
   {path:'login', component:LoginComponent},

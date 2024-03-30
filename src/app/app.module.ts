@@ -15,9 +15,9 @@ import { AdduserComponent } from './pages/adduser/adduser.component';
 import { LoginComponent } from './components/login/login.component';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatDialogConfig } from '@angular/material/dialog';
-import { MatSliderThumb } from '@angular/material/slider';
-import { MatDialogContainer } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialogComponent } from './dialogs/mat-dialog/mat-dialog.component';
 import { DoctorCardsComponent } from './components/doctor-cards/doctor-cards.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
@@ -25,8 +25,6 @@ import { GologComponent } from './dialogs/golog/golog.component';
 import { DoctorCategoryListComponent } from './components/doctor-category-list/doctor-category-list.component';
 import { AddPatientComponent } from './pages/add-patient/add-patient.component';
 import { UserPageComponent } from './pages/user-page/user-page.component';
-import { PatientInfoCardComponent } from './components/patient-info-card/patient-info-card.component';
-import { DoctorInfoCardComponent } from './components/doctor-info-card/doctor-info-card.component';
 import { ViewDoctorComponent } from './pages/view-doctor/view-doctor.component';
 import { AddDoctorComponent } from './pages/add-doctor/add-doctor.component';
 import { BookingCalendarComponent } from './components/booking-calendar/booking-calendar.component';
@@ -43,7 +41,9 @@ import { ViewDoctorDialogComponent } from './dialogs/view-doctor-dialog/view-doc
 import { EditPageAdminComponent } from './pages/edit-page-admin/edit-page-admin.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from   
-    '@angular/platform-browser/animations'
+    '@angular/platform-browser/animations';
+import { UserInfoCardComponent } from './components/user-info-card/user-info-card.component';
+import { AppointmentBookingDialogComponent } from './components/appointment-booking-dialog/appointment-booking-dialog.component'
 
 
 
@@ -62,8 +62,6 @@ import { BrowserAnimationsModule } from
    DoctorCategoryListComponent,
    AddPatientComponent,
    UserPageComponent,
-   PatientInfoCardComponent,
-   DoctorInfoCardComponent,
    LoginComponent,
    ViewDoctorComponent,
    AddDoctorComponent,
@@ -76,7 +74,9 @@ import { BrowserAnimationsModule } from
    AdminHeaderComponent,
    PageNotFoundComponent,
    ViewDoctorDialogComponent,
-   EditPageAdminComponent,  
+   EditPageAdminComponent,
+   UserInfoCardComponent,
+   AppointmentBookingDialogComponent,  
    
   ],
   imports: [
@@ -92,7 +92,11 @@ import { BrowserAnimationsModule } from
     RouterModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    BrowserAnimationsModule 
+    BrowserAnimationsModule ,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatDialogModule,
    
   ],
   providers: [{ provide: LOCALE_ID, useValue: 'ka-GE' }],

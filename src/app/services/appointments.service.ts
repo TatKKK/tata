@@ -4,6 +4,7 @@ import { Appointment } from '../models/appointment.model'
 import { Observable, BehaviorSubject, catchError, of } from 'rxjs'
 import { map } from 'rxjs/operators';
 import { AuthService } from './auth/auth.service';
+import { Day } from '../models/appointment.model';
 
 
 @Injectable({
@@ -13,8 +14,15 @@ export class AppointmentsService {
 public appointments:Appointment[]=[];
   constructor(private http:HttpClient,
               private authService:AuthService){
-
   }
+
+  private currentUserId = new BehaviorSubject<number|null>(null);
+  currentUserId$ = new BehaviorSubject<number|null>(null);
+
+  setCurrentUserId(userId:number):void{
+    this.currentUserId.next(userId);
+  }
+
   private currentDoctorId = new BehaviorSubject<number | null>(null)
   currentDoctorId$ = this.currentDoctorId.asObservable()
 
@@ -31,23 +39,8 @@ public appointments:Appointment[]=[];
 
   private apiUrl = "https://localhost:7042/api/Appointments";
 
-  createAppointment(appointment: Appointment): Observable<Appointment> {
-    //gavigo vinaa
-    const role = this.authService.getUserRole();
-    const userId = this.authService.getUserId();
-
-    if (role === 'doctor') {
-      appointment.DoctorId = userId;
-      console.log(appointment.DoctorId);
-    } else if (role === 'patient') {
-      appointment.PatientId = userId;
-      console.log(appointment.PatientId);
-    } else {
-      appointment.DoctorId=85;
-      appointment.PatientId=182;
-    }
-
-    let token=this.authService.getToken();    
+  createAppointment(newAppointment:Appointment): Observable<Appointment> {
+      let token=this.authService.getToken();    
       if(!this.authService.getToken()){
         alert('No Token');
       }
@@ -57,7 +50,7 @@ public appointments:Appointment[]=[];
         })
       };
 
-    return this.http.post<Appointment>(`${this.apiUrl}/create`, appointment, httpOptions);
+    return this.http.post<Appointment>(`${this.apiUrl}/create`, newAppointment, httpOptions);
   }
 
   updateAppointmentStatus(appointment: Appointment, id: number): Observable<any> {
@@ -78,6 +71,19 @@ public appointments:Appointment[]=[];
     return this.http.delete(`${this.apiUrl}/delte/${appointment.id}`, httpOptions);
   }
 
+  getAppointmentsByUser(userId: number): Observable<Appointment[]> {
+    return this.http.get<Appointment[]>(`https://localhost:7042/api/Appointments/users/${userId}`).pipe(
+      map(appointments => appointments.map(a => {
+        if (a.StartTime) {
+          a.StartTime = new Date(a.StartTime + 'Z');
+        }
+        if (a.EndTime) {
+          a.EndTime = new Date(a.EndTime + 'Z');
+        }
+        return a;
+      }))
+    );
+  }
   getAppointmentsByDoctor(doctorId: number): Observable<Appointment[]> {
     return this.http.get<Appointment[]>(`https://localhost:7042/api/Appointments/doctor/${doctorId}`).pipe(
       map(appointments => appointments.map(a => {
@@ -118,6 +124,11 @@ public appointments:Appointment[]=[];
       }))
     );
   }
+
+  getTotal(){
+    return this.getAppointmentsByUser.length;
+  }
+  
   getCurrentDoctorId(): number | null {
     return this.currentDoctorId.value;
   }
@@ -125,72 +136,9 @@ public appointments:Appointment[]=[];
   getCurrentPatientId(): number | null {
     return this.currentPatientId.value;
   }
+
+  getCurrentUserId():number|null{
+    return this.currentUserId.value;
+  }
   
 }
-
-  // //DOCTORS
-  // private currentDoctorId = new BehaviorSubject<number | null>(null)
-  // currentDoctorId$ = this.currentDoctorId.asObservable()
-
-  // setCurrentDoctorId (doctorId: number): void {
-  //   this.currentDoctorId.next(doctorId)
-  // }
-
-  // getAppointmentsByDoctor (doctorId: number): Observable<Appointment[]> {
-  //   let httpOptions={
-  //     headers:new HttpHeaders({
-  //       "Content-Type":"application/json"
-  //     })
-  //   };
-  //   return this.http.get<Appointment[]>(
-  //     `https://localhost:7042/api/Appointments/appointments/doctor/${doctorId}`, httpOptions
-  //   )
-  //   .pipe(
-  //     catchError(this.handleError<Appointment[]>('getAppointmentsByDoctor'))
-  //   );
-    
-  // }
-
-  // createAppointment (appointment: Appointment): Observable<Appointment> {
-  //   return this.http.post<Appointment>(
-  //     'https://localhost:7042/api/Appointments',
-  //     appointment
-  //   )
-  // }
-
-  // //Patients
-  // private currentPatientId = new BehaviorSubject<number | null>(null)
-  // currentPatientId$ = this.currentPatientId.asObservable()
-
-  // setCurrentPatientId (patientId: number): void {
-  //   this.currentDoctorId.next(patientId)
-  // }
-  // getAppointmentsByPatient (patientId: number): Observable<Appointment[]> {
-  //   let httpOptions={
-  //     headers:new HttpHeaders({
-  //       "Content-Type":"application/json"
-  //     })     
-  //   }
-  //   return this.http.get<Appointment[]>(
-  //     `https://localhost:7042/api/Appointments/appointments/patient/${patientId}`, httpOptions
-  //   ) 
-  //   .pipe(
-  //     catchError(this.handleError<Appointment[]>('getAppointmentsByPatient'))
-  //   );
-  // }
-
-
-  // private handleError<T>(operation = 'operation', result?: T) {
-  //   return (error: any): Observable<T> => {
-  //     console.error(error);
-  
-  //     this.log(`${operation} failed: ${error.message}`);
-  //     return of(result as T);
-  //   };
-  // }
-  
-  // private log(message: string) {
-  //   console.log(message);
-  // }
-  
-  

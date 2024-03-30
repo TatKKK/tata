@@ -5,7 +5,8 @@
 <div class="container-content">
     <app-doctor-general-card *ngIf="!isAdmin" [doctor]="doctor" ></app-doctor-general-card>
     <app-doctor-admin *ngIf="isAdmin"></app-doctor-admin>
-    <app-booking-calendar *ngIf="doctorId !== null" [doctorId]="doctorId"></app-booking-calendar>
-
+    <app-booking-calendar *ngIf="doctorId !== null && Id !== null
+    && Id !==undefined" [doctorId]="doctorId" [id]="Id"
+    [appointments]="appointments"></app-booking-calendar>
 </div>
 </div>

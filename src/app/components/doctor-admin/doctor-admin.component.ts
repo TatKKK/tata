@@ -14,6 +14,7 @@ import { AuthService } from '../../services/auth/auth.service';
 export class DoctorAdminComponent {
   @Input() doctor!: Doctor;
 @Input() doctorId!:number;
+@Input() userId!:number;
 
   
   isEditMode: boolean = false;

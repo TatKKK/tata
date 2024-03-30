@@ -5,6 +5,8 @@ import { DoctorsService } from '../../services/doctors.service';
 import { Doctor } from '../../models/doctor.model';
 import { ChangeDetectorRef } from '@angular/core';
 import { AppointmentsService } from '../../services/appointments.service';
+import { Appointment } from '../../models/appointment.model';
+import { Day } from '../../models/appointment.model';
 
 @Component({
   selector: 'app-view-doctor',
@@ -15,12 +17,18 @@ export class ViewDoctorComponent implements OnInit {
   token:string="";  
   isAdmin:boolean=false;  
   userRole:string='';
+  userId!:number;
+
+ 
 
   doctorId: number | null = null;
 
   doctor!: Doctor;
+  appointments:Appointment[]=[];
+  appointment!:Appointment;
+  Id:number | null | undefined;
 
- 
+  
 constructor( private authService:AuthService,
   private route:ActivatedRoute,
   private doctorsService:DoctorsService,
@@ -34,34 +42,37 @@ setUserDetails(token: string): void {
 }
 
 ngOnInit(): void {
+  
+  this.Id=this.authService.getUserId();
   this.route.params.subscribe(params => {
-    const id=params['id'];
-    if(id){
-      this.doctorId=+id;    
-      this.doctorsService.getDoctor(this.doctorId).subscribe({
-        next: (doctor) => {
-          this.doctor = doctor;
-          this.changeDetectorRef.detectChanges();
-          console.log(doctor);
-          if (doctor && doctor.Id !== undefined && doctor.Id !== null) {
-            this.appointmentsService.setCurrentDoctorId(doctor.Id);
-          }
-        },
-        error: (err) => {
-          console.error('Failed to fetch doctor', err);
-        },
-        complete: () => {
-          console.log('Fetch doctor call completed');
-        }
-      });
+    const id = params['id'];
+    if (id) {
+      this.doctorId = +id;
+      this.fetchDoctorAndAppointments(this.doctorId);
     } else {
       console.log('No doctor ID provided in the route');
     }
   });
 }
 
-
-
+private fetchDoctorAndAppointments(doctorId: number): void {
+  this.doctorsService.getDoctor(doctorId).subscribe({
+    next: (doctor) => {
+      this.doctor = doctor;
+      this.changeDetectorRef.detectChanges();
+      if (doctor?.Id) {
+        this.appointmentsService.getAppointmentsByDoctor(doctor.Id).subscribe({
+          next: (appointments) => {
+            this.appointments = appointments;
+          },
+          error: (err) => console.error('Error fetching appointments', err),
+        });
+      }
+    },
+    error: (err) => console.error('Failed to fetch doctor', err),
+  });
 }
+}
+
 
 

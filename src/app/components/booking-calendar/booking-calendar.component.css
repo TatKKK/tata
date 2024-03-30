@@ -37,6 +37,10 @@
   display: flex;
   flex-direction: column;
 }
+.my-booking{
+  /* background: #DAFAEE; */
+  background-color: blue;
+}
 
 .booked {
   background-color: #ff93a6;

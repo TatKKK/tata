@@ -1,0 +1,13 @@
+<h2 mat-dialog-title>ვიზიტის დაჯავშნა</h2>
+<mat-dialog-content>
+  <form #appointmentForm="ngForm">
+    <mat-form-field appearance="fill">
+      <mat-label >აღწერა</mat-label>
+      <textarea matInput name="Notes" ngModel required></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button [mat-dialog-close]="false">Cancel</button>
+  <button mat-button [mat-dialog-close]="appointmentForm.value.Notes" cdkFocusInitial cdkFocusInitial>Submit</button>
+</mat-dialog-actions>

@@ -1,4 +1,4 @@
-import { Component, NgZoneOptions, OnInit, Input } from '@angular/core';
+import { Component,  OnInit, Input, OnDestroy } from '@angular/core';
 import { faAngleRight, faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { MatDialog } from '@angular/material/dialog';
 import { GologComponent } from '../../dialogs/golog/golog.component';
@@ -8,35 +8,56 @@ import { Appointment } from '../../models/appointment.model';
 import { AppointmentsService } from '../../services/appointments.service';
 import { MatDialogConfig } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Subject, takeUntil } from 'rxjs';
+import { AppointmentBookingDialogComponent } from '../appointment-booking-dialog/appointment-booking-dialog.component';
 
-
-interface Day {
-  date: Date;
-  isWeekend:boolean;
-  isDayOff:boolean;
-  appointments:Appointment[];
-  
-}
+import { Day } from '../../models/appointment.model';
 
 @Component({
   selector: 'app-booking-calendar',
   templateUrl: './booking-calendar.component.html',
   styleUrl: './booking-calendar.component.css'
 })
-export class BookingCalendarComponent implements OnInit{
+export class BookingCalendarComponent implements OnInit, OnDestroy{
+  //icons  
   left=faAngleLeft;
   right=faAngleRight;
 
+//jer iyos
+  private destroy$ = new Subject<void>();
+
+//Parentisgan shemosulebi  
   @Input() doctorId!: number;
+  @Input() userId!:number
+ 
+  @Input() appointments: Appointment[] = [];
+  @Input() appointment!:Appointment;
 
-//gavigo vinaa
-userId=this.authService.getUserId();
+  //logged in user id
+  @Input() id!:number;
+  
+  days: Day[] = [];
+  workingHours = Array.from({length: 9}, (_, i) => 9+i); // 9-17
+  currentWeekStart: Date = new Date();
+  currentDate:Date=new Date();
 
+//Id kidev bevria..
+// Id=this.authService.getUserId();
+
+//yoveli shemtxvevistvis 
 userRole!:string;
 isDoctor:boolean=false;
 isPatient:boolean=false;  
 isAdmin:boolean=false;
 isLoggedIn:boolean=false;
+isDayOff!:boolean;
+
+//dasvenebis dgebi..
+predefinedDayOffs:Date[]=[
+  new Date(2024, 3, 28),
+  new Date(2024, 3, 29),
+  new Date(2024, 4, 3),
+]
 
 checkUserRole(){
   this.isDoctor=this.userRole === 'doctor';
@@ -44,50 +65,22 @@ checkUserRole(){
   this.isAdmin=this.userRole === 'admin';
 }
 
-  days: Day[] = [];
-  appointments:Appointment[]=[];
-  appointment!:Appointment;
-
-  workingHours = Array.from({length: 9}, (_, i) => 9+i); // 9-17
-
-  currentWeekStart: Date = new Date();
-  currentDate:Date=new Date();
-  isBookable(day: Day, hour: number): boolean {
-    const isWeekend = day.isWeekend;
-    const isBooked = day.appointments.some(appointment =>
-      appointment.StartTime?.getHours() === hour && appointment.IsBooked
-    );
-    return !isWeekend && !isBooked;
-  }
-  
-  isDayOff!:boolean;
-
-  predefinedDayOffs:Date[]=[
-    new Date(2024, 3, 28),
-    new Date(2024, 3, 29),
-    new Date(2024, 4, 3),
-  ]
 
   ngOnInit() {
+  
     this.userRole = this.authService.getUserRole();   
     this.checkUserRole();
     this.isLoggedIn = this.authService.isLoggedInSync();
-    
-    this.appointmentService.currentDoctorId$.subscribe((doctorId) => {
-      if (doctorId) {
-        this.appointmentService.getAppointmentsByDoctor(doctorId).subscribe({
-          next: (appointments: Appointment[]) => {
-            this.appointments = appointments;
-            this.initializeDays();            
-            // this.authService.isLoggedIn;
-          },
-          error: (err) => console.error('Error fetching appointments', err)
-        });
-      }
-    });
+    this.appointments;
+    console.log('Received appointments:', this.appointments);
+ 
+    this.initializeDays();   
     this.goToCurrentWeek();
-    this.initializeDays();
-   
+  }
+  
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 constructor(
   public dialog: MatDialog,
@@ -95,11 +88,7 @@ constructor(
   private authService: AuthService,
   public appointmentService: AppointmentsService){
 }
-  /*| ---  avtorizebulia tu ara  */
-  
-
-
-
+ 
 //kvira
   goToCurrentWeek() {
     const date = new Date();
@@ -107,7 +96,6 @@ constructor(
     const diff = date.getDate() - day + (day === 0 ? -6 : 1); //კვირა
     this.currentWeekStart = new Date(date.setDate(diff));
     this.currentWeekStart.setHours(0, 0, 0, 0);
-
     this.initializeDays();
   }
 
@@ -154,11 +142,44 @@ initializeDays(): void {
   }
 }
 
+// //my bookings
+isBookedByMe(day: Day, hour: number): boolean {
+  return day.appointments.some(appointment => {
+    const appointmentHour = appointment.StartTime?.getHours();
+    const isSameHour = appointmentHour === hour;
+    const isUserAppointment = appointment.PatientId === this.id; //logged in user tu eqimia da sxva eqimebs atvalierebs..
+    return isSameHour && isUserAppointment;
+  });
+}
+
+  isBookable(day: Day, hour: number): boolean {
+    const isWeekend = day.isWeekend;
+    const isBooked = day.appointments.some(appointment =>
+      appointment.StartTime?.getHours() === hour && appointment.IsBooked
+    );
+    return !isWeekend && !isBooked;
+  }
+  
 
 isAppointmentBooked(day: Day, hour: number): boolean {
   return day.appointments.some(appointment => 
     appointment.StartTime?.getHours() === hour && appointment.IsBooked
   );
+}
+
+
+getClassForSlot(day: Day, hour: number): string {
+  if (this.isBookedByMe(day, hour)) {
+    console.log("isBookedByMe");
+    return 'my-booking'; 
+  } else if (this.isAppointmentBooked(day, hour)) {
+    console.log('booked');
+    return 'booked'; 
+  } else if (day.isWeekend) {
+    return 'weekend'; 
+  } else {
+    return 'freeSlot'; 
+  }
 }
 
 
@@ -170,41 +191,76 @@ openDialogBasedOnAuth(day: Day, hour: number, event: MouseEvent) {
     this.openLogDialog(event);
   }
 }
-
   
-  openLogDialog(event:MouseEvent):void{
-   
+  openLogDialog(event:MouseEvent):void{   
     event.preventDefault();
     
     const dialogRef=  this.dialog.open(GologComponent, {
-      width:'25%'
+      width:'30%'
     });
-    // dialogRef.afterClosed().subscribe(result=>{
-    //   if(result === true){
+    dialogRef.afterClosed().subscribe(result=>{
+      if(result === true){
       
-    //   }
-    // })
-  }
-
-  openBookingDialog(day:Day, hour:number):void{
-   
-    const dialogConfig= new MatDialogConfig();
-    dialogConfig.width = '50%';
-    dialogConfig.data = {
-      day: day,
-      hour: hour
-    };
-    const dialogRef = this.dialog.open(MatDialogComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe(result => {
-      if (result === true) {
-       this.initializeDays();
-
-       this.snackBar.open(`Appointment successfully booked for ${day.date.toDateString()} at ${hour}:00.`, 'Close', {
-        duration: 5000,
-      });
       }
-    });
-  }
+    })}
+  
+    openBookingDialog(day: Day, hour: number): void {
+      const dialogConfig = new MatDialogConfig();
+      dialogConfig.width = '50%';
+    
+      const dialogRef = this.dialog.open(AppointmentBookingDialogComponent, dialogConfig);
+    
+      dialogRef.afterClosed().subscribe(notes => {
+        if (notes) {
+          this.createAppointment(day, hour, notes);
+        }
+      });
+    }
+    
+    createAppointment(day: Day, hour: number, notes: string): void {
+      const startDate = new Date(day.date);
+      startDate.setHours(hour, 0, 0, 0);
+      // const endDate = new Date(startDate);
+      // endDate.setHours(startDate.getHours() + 1); 
+      const role=this.authService.getUserRole();
+      const userId=this.authService.getUserId();
+      let doctorId = null;
+    let patientId = null;
+    
+    if (role === 'doctor') {
+      doctorId = userId;
+    } else if (role === 'patient') {
+      patientId = userId;
+    }else{
+      patientId=161;
+      doctorId=163;
+    }
+            
+     const newAppointment={
+      Id:0,
+      DoctorId:doctorId,
+      patientId:patientId,
+      StartTime:startDate,
+      Notes:notes,
+      IsBooked: true
+     }
+        
+     console.log(newAppointment +"new Appointment");
+
+      this.appointmentService.createAppointment(newAppointment).subscribe({
+        next: (appointment) => {
+          console.log('Appointment booked successfully:', appointment);
+          this.snackBar.open('Appointment booked successfully', 'Close', { duration: 5000 });
+          this.refreshAppointments();
+        },
+        error: (error) => {
+          console.error('Error booking appointment:', error);
+          this.snackBar.open('Failed to book appointment', 'Close', { duration: 5000 });
+        }
+      });
+    }
+
+    
 
   
   onBookedSlotClick(day: Day, hour: number, event: MouseEvent): void {
@@ -237,6 +293,7 @@ openDialogBasedOnAuth(day: Day, hour: number, event: MouseEvent) {
     return appointment?.id;
   }
   
+
   refreshAppointments() {
     this.appointmentService.getAppointmentsByDoctor(this.doctorId).subscribe({
       next: (appointments) => {
@@ -247,5 +304,15 @@ openDialogBasedOnAuth(day: Day, hour: number, event: MouseEvent) {
       }
     });
   }
+  // refreshAppointments() {
+  //   this.appointmentService.getAppointmentsByDoctor(this.doctorId).subscribe({
+  //     next: (appointments) => {
+  //       this.appointments = appointments;
+  //     },
+  //     error: (error) => {
+  //       console.error('Error fetching appointments:', error);
+  //     }
+  //   });
+  // }
   
 }

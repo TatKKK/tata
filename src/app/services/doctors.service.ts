@@ -1,7 +1,7 @@
 import { DoctorDto } from '../models/doctor.model';
 import { Doctor } from '../models/doctor.model';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable, of, throwError,  } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SignalRService } from './signal-r.service';

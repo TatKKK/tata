@@ -15,6 +15,7 @@ export class DoctorGeneralCardComponent {
   @Input() doctor!: Doctor;
   // doctor!:Doctor;
   @Input() doctorId!: number;
+  @Input() userId!:number;
 
   constructor(
     public doctorsService:DoctorsService,
